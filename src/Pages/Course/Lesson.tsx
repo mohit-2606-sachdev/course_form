@@ -231,13 +231,13 @@ export default class Lesson extends Component<Props> {
                 sx={{
                   width:{
                     md:"50%",
-                    xs:"100%"
+                    xs:"95%"
                   },
                   paddingTop:{
                     xs:2
                   },
                   padding:{
-                    md:0,
+                    md:1,
                     xs:1
                   },
                   border:1,
@@ -247,8 +247,11 @@ export default class Lesson extends Component<Props> {
                     md:3
                   },
                   marginTop:{
-                    md:0,
+                    md:2,
                     xs:3
+                  },
+                  minHeight:{
+                    xs:"150px"
                   }
                 }}
               >
@@ -258,8 +261,7 @@ export default class Lesson extends Component<Props> {
                         onChange={(state)=>handleLessonDataChange(theme_index,lesson_index,stateToHTML(state.getCurrentContent()))}
                     />
                 </ThemeProvider>  
-              </Box>
-             
+              </Box>   
             </Stack>
           </Stack>
 
