@@ -4,7 +4,8 @@ import {
   Divider,
   FormControl,
   InputLabel,
-  NativeSelect,
+  MenuItem,
+  Select,
   Stack,
   Switch,
   TextField,
@@ -15,10 +16,11 @@ import StarBorderOutlinedIcon from "@mui/icons-material/StarBorderOutlined";
 import TimerOutlinedIcon from "@mui/icons-material/TimerOutlined";
 import styled from "@emotion/styled";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
-import NoImage from "../../assets/images/no-image.png"
+import NoImage from "../../assets/images/no-image.png";
 import Theme from "./Theme";
 import Lesson from "./Lesson";
-import AddCircleOutlineOutlinedIcon from '@mui/icons-material/AddCircleOutlineOutlined';
+import AddCircleOutlineOutlinedIcon from "@mui/icons-material/AddCircleOutlineOutlined";
+import { SelectChangeEvent } from "@mui/material";
 
 interface SelectType {
   name: string;
@@ -36,28 +38,64 @@ const VisuallyHiddenInput = styled("input")({
   width: 1,
 });
 
+interface CourseType {
+  name: string;
+  duration: string;
+  leaderboard_points: number;
+  category: number;
+  level: number;
+  product_type: number;
+  language: number;
+  certificate: number;
+  description: string;
+  image_url: string;
+}
+
 interface Props {
-  handleAddThemeClick: () => void; 
-  handleDeleteThemeClick: (id:number) => void; 
+  handleAddThemeClick: () => void;
+  handleDeleteThemeClick: (id: number) => void;
   course_themes: ThemeAlias[];
-  handleAddLessonClick: (id:number) => void;
+  course_data: CourseType;
+  handleAddLessonClick: (id: number) => void;
   handleDeleteLessonClick: (themeId: number, lessonIndex: number) => void;
+  handleCourseDataChange: (
+    e:
+      | React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+      | SelectChangeEvent<number>
+  ) => void;
+  handleThemeDataChange: (
+    id: number,
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+    >  | SelectChangeEvent<number>
+  ) => void;
+  handleLessonDataChange: (
+    theme_id: number,
+    lesson_id: number,
+    e:
+      | React.ChangeEvent<
+          HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+        >
+      | string   | SelectChangeEvent<number>
+  ) => void;
 }
 
 interface LessonAlias {
-  title:string;
-  leaderboard_points:number;
-  product_type:number;
-  image_url:string;
-  description:string;
+  title: string;
+  leaderboard_points: number;
+  product_type: number;
+  image_url: string;
+  description: string;
+  order_in_the_course: number | null;
 }
 
 interface ThemeAlias {
-  title:string;
-  leaderboard_points:number;
-  product_type:number;
-  image_url:string;
-  lessons:LessonAlias[];
+  title: string;
+  leaderboard_points: number;
+  product_type: number;
+  image_url: string;
+  lessons: LessonAlias[];
+  order_in_the_course: number | null;
 }
 
 export default class CourseSection extends Component<Props> {
@@ -115,24 +153,39 @@ export default class CourseSection extends Component<Props> {
     },
   ];
 
-  constructor(props:Props){
-    super(props)
+  constructor(props: Props) {
+    super(props);
   }
 
   render() {
-    const {handleAddThemeClick, handleAddLessonClick,handleDeleteThemeClick,handleDeleteLessonClick, course_themes} = this.props
+    const {
+      handleAddThemeClick,
+      handleAddLessonClick,
+      handleDeleteThemeClick,
+      handleDeleteLessonClick,
+      handleCourseDataChange,
+      handleThemeDataChange,
+      handleLessonDataChange,
+      course_themes,
+      course_data,
+    } = this.props;
     return (
       <Box
         sx={{
-          width: "70%",
-          padding: 4,
+          width:{
+            lg: "70%",
+            xs:"100%"
+          },
+          padding: 2,
+          bgcolor: "#f2f2f2",
         }}
       >
         <Box
           sx={{
-            borderRadius:3,
-            border: 1,
+            borderRadius: 3,
+            boxShadow:1,
             padding: 1,
+            bgcolor: "white",
           }}
         >
           <Stack divider={<Divider orientation="horizontal" flexItem />}>
@@ -151,209 +204,233 @@ export default class CourseSection extends Component<Props> {
                 alignItems="center"
                 divider={<Divider orientation="vertical" flexItem />}
               >
-                <Typography alignItems="center">
+                <Box display="flex" alignItems="center">
                   <StarBorderOutlinedIcon />
-                  10 pts
-                </Typography>
-                <Typography>
-                  <TimerOutlinedIcon />
-                  24H 30M
-                </Typography>
-                <Typography>
-                  Active
-                  <Switch defaultChecked />
-                </Typography>
+                  <Typography>{course_data.leaderboard_points} pts</Typography>
+                </Box>
+                <Box display="flex" alignItems="center">
+                <TimerOutlinedIcon />
+                  <Typography>{course_data.duration}</Typography>
+                </Box>
+                <Box display="flex" alignItems="center">
+                <Typography>Active</Typography>
+                <Switch defaultChecked />
+                </Box>
               </Stack>
             </Box>
             <Stack
-              direction="row"
+              sx={{
+                flexDirection:{
+                  md:"row",
+                  xs:"column"
+                }
+              }}
               divider={<Divider orientation="vertical" flexItem />}
             >
               <Box
                 sx={{
-                  width: "50%",
-                  padding: 2,
+                  width:{
+                    md:"50%",
+                    xs:"100%"
+                  },
+                  padding:{
+                    md:2,
+                    xs:0
+                  },
+                  paddingTop:{
+                    xs:2
+                  }
                 }}
               >
                 <Stack direction="column">
                   <TextField
                     id="filled-helperText"
                     label="Course Name"
-                    variant="filled"
+                    variant="outlined"
+                    value={course_data.name}
+                    name="name"
+                    onChange={handleCourseDataChange}
+                    sx={{
+                      marginBottom: 2,
+                    }}
                   />
 
-                  <Stack direction="row">
-                    <FormControl fullWidth>
-                      <InputLabel
-                        variant="standard"
-                        htmlFor="uncontrolled-native"
-                      >
-                        Duration
-                      </InputLabel>
-                      <NativeSelect
-                        inputProps={{
-                          name: "age",
-                          id: "uncontrolled-native",
-                        }}
-                      >
-                        <option></option>
-                        <option value={10}>Ten</option>
-                        <option value={20}>Twenty</option>
-                        <option value={30}>Thirty</option>
-                      </NativeSelect>
-                    </FormControl>
+                  <Stack direction="row" marginBottom={2} spacing={2}>
+                    <TextField
+                      id="filled-helperText"
+                      label="Duration"
+                      variant="outlined"
+                      value={course_data.duration}
+                      name="duration"
+                      fullWidth
+                      onChange={handleCourseDataChange}
+                    />
                     <TextField
                       fullWidth
                       id="filled-helperText"
                       label="Leadership Point"
-                      variant="filled"
+                      value={course_data.leaderboard_points}
+                      name="leaderboard_points"
+                      onChange={handleCourseDataChange}
+                      variant="outlined"
                       type="number"
                     />
                   </Stack>
-                  <Stack direction="row">
+                  <Stack direction="row" marginBottom={2} spacing={2}>
                     <FormControl fullWidth>
-                      <InputLabel
-                        variant="standard"
-                        htmlFor="uncontrolled-native"
-                      >
+                      <InputLabel id="demo-select-small-label">
                         Category
                       </InputLabel>
-                      <NativeSelect
-                        inputProps={{
-                          name: "age",
-                          id: "uncontrolled-native",
-                        }}
+                      <Select
+                        labelId="demo-select-small-label"
+                        id="demo-select-small"
+                        value={course_data.category}
+                        label="Age"
+                        onChange={handleCourseDataChange}
+                        name="category"
                       >
-                        <option></option>
+                        <MenuItem value="">None</MenuItem>
                         {this.category.map((ele: SelectType, index: number) => {
                           return (
-                            <option key={index} value={index}>
+                            <MenuItem key={index} value={index}>
                               {ele.name}
-                            </option>
+                            </MenuItem>
                           );
                         })}
-                      </NativeSelect>
+                      </Select>
                     </FormControl>
                     <FormControl fullWidth>
-                      <InputLabel
-                        variant="standard"
-                        htmlFor="uncontrolled-native"
-                      >
+                      <InputLabel id="demo-select-small-label">
                         Level
                       </InputLabel>
-                      <NativeSelect
-                        inputProps={{
-                          name: "age",
-                          id: "uncontrolled-native",
-                        }}
+                      <Select
+                        labelId="demo-select-small-label"
+                        id="demo-select-small"
+                        value={course_data.level}
+                        label="level"
+                        onChange={handleCourseDataChange}
+                        name="level"
                       >
-                        <option></option>
+                        <MenuItem value="">None</MenuItem>
                         {this.level.map((ele: SelectType, index: number) => {
                           return (
-                            <option key={index} value={index}>
+                            <MenuItem key={index} value={index}>
                               {ele.name}
-                            </option>
+                            </MenuItem>
                           );
                         })}
-                      </NativeSelect>
+                      </Select>
                     </FormControl>
                   </Stack>
-                  <Stack direction="row">
+                  <Stack direction="row" marginBottom={2} spacing={2}>
                     <FormControl fullWidth>
-                      <InputLabel
-                        variant="standard"
-                        htmlFor="uncontrolled-native"
-                      >
+                      <InputLabel id="demo-select-small-label">
                         Product Type
                       </InputLabel>
-                      <NativeSelect
-                        inputProps={{
-                          name: "age",
-                          id: "uncontrolled-native",
-                        }}
+                      <Select
+                        labelId="demo-select-small-label"
+                        id="demo-select-small"
+                        value={course_data.product_type}
+                        label="level"
+                        onChange={handleCourseDataChange}
+                        name="product_type"
                       >
-                        <option></option>
+                        <MenuItem value="">None</MenuItem>
                         {this.product_type.map(
                           (ele: SelectType, index: number) => {
                             return (
-                              <option key={index} value={index}>
+                              <MenuItem key={index} value={index}>
                                 {ele.name}
-                              </option>
+                              </MenuItem>
                             );
                           }
                         )}
-                      </NativeSelect>
+                      </Select>
                     </FormControl>
+
                     <FormControl fullWidth>
-                      <InputLabel
-                        variant="standard"
-                        htmlFor="uncontrolled-native"
-                      >
+                      <InputLabel id="demo-select-small-label">
                         Language
                       </InputLabel>
-                      <NativeSelect
-                        inputProps={{
-                          name: "age",
-                          id: "uncontrolled-native",
-                        }}
+                      <Select
+                        labelId="demo-select-small-label"
+                        id="demo-select-small"
+                        value={course_data.language}
+                        label="level"
+                        onChange={handleCourseDataChange}
+                        name="language"
                       >
-                        <option></option>
+                        <MenuItem value="">None</MenuItem>
                         {this.language.map((ele: SelectType, index: number) => {
                           return (
-                            <option key={index} value={index}>
+                            <MenuItem key={index} value={index}>
                               {ele.name}
-                            </option>
+                            </MenuItem>
                           );
                         })}
-                      </NativeSelect>
+                      </Select>
                     </FormControl>
                   </Stack>
 
                   <FormControl fullWidth>
-                    <InputLabel
-                      variant="standard"
-                      htmlFor="uncontrolled-native"
-                    >
+                    <InputLabel id="demo-select-small-label">
                       Certificate
                     </InputLabel>
-                    <NativeSelect
-                    variant="filled"
-                      inputProps={{
-                        name: "age",
-                        id: "uncontrolled-native",
-                      }}
+                    <Select
+                      labelId="demo-select-small-label"
+                      id="demo-select-small"
+                      value={course_data.certificate}
+                      label="level"
+                      onChange={handleCourseDataChange}
+                      name="certificate"
                     >
-                      <option></option>
+                      <MenuItem value="">None</MenuItem>
                       {this.certificate.map(
                         (ele: SelectType, index: number) => {
                           return (
-                            <option key={index} value={index}>
+                            <MenuItem key={index} value={index}>
                               {ele.name}
-                            </option>
+                            </MenuItem>
                           );
                         }
                       )}
-                    </NativeSelect>
+                    </Select>
                   </FormControl>
                 </Stack>
               </Box>
               <Box
                 sx={{
-                  width: "50%",
-                  padding: 2,
+                  width:{
+                    md:"50%",
+                    xs:"100%"
+                  },
+                  padding:{
+                    md:2,
+                    xs:0
+                  },
+                  paddingTop:{
+                    xs:2
+                  }
                 }}
               >
-                <Stack
+                <Box
                   sx={{
-                    direction: "row",
+                    display: "flex",
                   }}
                 >
                   <Box
                     sx={{
-                        width: "40%",
-                        }}
+                      width: "40%",
+                    }}
                   >
-                    <img src={NoImage} alt="No Image" height={"100px"} width={"100px"} />
+                    <img
+                      src={
+                        course_data.image_url ? course_data.image_url : NoImage
+                      }
+                      alt="Image"
+                      height={"100px"}
+                      width={"100px"}
+                    />
                   </Box>
 
                   <Stack
@@ -373,50 +450,111 @@ export default class CourseSection extends Component<Props> {
                       startIcon={<CloudUploadIcon />}
                     >
                       Upload file
-                      <VisuallyHiddenInput type="file" />
+                      <VisuallyHiddenInput
+                        type="file"
+                        onChange={handleCourseDataChange}
+                      />
                     </Button>
                   </Stack>
-                </Stack>
+                </Box>
                 <TextField
                   label="Description"
-                    variant="filled"
+                  value={course_data.description}
+                  name="description"
+                  onChange={handleCourseDataChange}
+                  variant="outlined"
                   multiline
                   rows={2}
                   maxRows={4}
                   fullWidth
+                  sx={{
+                    marginTop:2
+                  }}
                 />
               </Box>
             </Stack>
           </Stack>
         </Box>
 
-        {
-          course_themes && course_themes.map((theme,theme_index)=>{
-            return <Box>
-              <Box >
-            <Theme theme={theme} theme_index={theme_index} handleDeleteThemeClick={handleDeleteThemeClick}/>
-          </Box>
-          {
-            theme.lessons && theme.lessons.map((lesson,lesson_index)=>{
-              return <Box >
-              <Lesson theme_index={theme_index} lesson={lesson} lesson_index={lesson_index} handleDeleteLessonClick={handleDeleteLessonClick}/>
-            </Box>
-            })
-          }
-            <Stack direction="row" spacing={2} marginLeft={5} marginTop={2}>
-              <Button size='small' variant='outlined' startIcon={<AddCircleOutlineOutlinedIcon/>} onClick={()=>handleAddLessonClick(theme_index)}>Add Lesson</Button>
-              <Button size='small' variant='outlined' startIcon={<AddCircleOutlineOutlinedIcon/>}>Add Quiz</Button>
-              <Button size='small' variant='outlined' startIcon={<AddCircleOutlineOutlinedIcon/>}>Add Flash Card</Button>
-            </Stack>
-            </Box>
-          })
-        }
+        {course_themes &&
+          course_themes.map((theme, theme_index) => {
+            return (
+              <Box>
+                <Box>
+                  <Theme
+                    theme={theme}
+                    theme_index={theme_index}
+                    handleDeleteThemeClick={handleDeleteThemeClick}
+                    handleThemeDataChange={handleThemeDataChange}
+                  />
+                </Box>
+                {theme.lessons &&
+                  theme.lessons.map((lesson, lesson_index) => {
+                    return (
+                      <Box>
+                        <Lesson
+                          theme_index={theme_index}
+                          lesson={lesson}
+                          lesson_index={lesson_index}
+                          handleDeleteLessonClick={handleDeleteLessonClick}
+                          handleLessonDataChange={handleLessonDataChange}
+                        />
+                      </Box>
+                    );
+                  })}
+                <Stack direction="row" spacing={2} marginLeft={5} marginTop={2}>
+                  <Button
+                    size="small"
+                    variant="outlined"
+                    startIcon={<AddCircleOutlineOutlinedIcon />}
+                    onClick={() => handleAddLessonClick(theme_index)}
+                  >
+                    Add Lesson
+                  </Button>
+                  <Button
+                    size="small"
+                    variant="outlined"
+                    startIcon={<AddCircleOutlineOutlinedIcon />}
+                  >
+                    Add Quiz
+                  </Button>
+                  <Button
+                    size="small"
+                    variant="outlined"
+                    startIcon={<AddCircleOutlineOutlinedIcon />}
+                  >
+                    Add Flash Card
+                  </Button>
+                </Stack>
+              </Box>
+            );
+          })}
 
         <Stack direction="row" spacing={2} marginTop={2}>
-        <Button size='small' variant='outlined' startIcon={<AddCircleOutlineOutlinedIcon/>} onClick={handleAddThemeClick} >New Theme</Button>
-        <Button size='small' variant='outlined' startIcon={<AddCircleOutlineOutlinedIcon/>}>New Mock Exam</Button>
-        <Button size='small' variant='outlined' startIcon={<AddCircleOutlineOutlinedIcon/>} onClick={()=>console.log(course_themes)}>Console State</Button>
-      </Stack>
+          <Button
+            size="small"
+            variant="outlined"
+            startIcon={<AddCircleOutlineOutlinedIcon />}
+            onClick={handleAddThemeClick}
+          >
+            New Theme
+          </Button>
+          <Button
+            size="small"
+            variant="outlined"
+            startIcon={<AddCircleOutlineOutlinedIcon />}
+          >
+            New Mock Exam
+          </Button>
+          <Button
+            size="small"
+            variant="outlined"
+            startIcon={<AddCircleOutlineOutlinedIcon />}
+            onClick={() => console.log(course_themes)}
+          >
+            Console State
+          </Button>
+        </Stack>
       </Box>
     );
   }

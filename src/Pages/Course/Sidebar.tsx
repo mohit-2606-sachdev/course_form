@@ -1,5 +1,5 @@
-import { ExpandLess, ExpandMore, StarBorder } from '@mui/icons-material'
-import { Box, Button, Collapse, Divider, List, ListItemButton, ListItemIcon, ListItemText, Stack } from '@mui/material'
+import { ExpandLess, ExpandMore } from '@mui/icons-material'
+import { Box, Button, Collapse, Divider, List, ListItemButton, ListItemText, Stack } from '@mui/material'
 import { Component } from 'react'
 import AddCircleOutlineOutlinedIcon from '@mui/icons-material/AddCircleOutlineOutlined';
 
@@ -14,6 +14,7 @@ interface Lesson {
   product_type:number;
   image_url:string;
   description:string;
+  order_in_the_course: number | null;
 }
 
 interface Theme {
@@ -21,40 +22,74 @@ interface Theme {
   leaderboard_points:number;
   product_type:number;
   image_url:string;
+  order_in_the_course: number | null;
   lessons:Lesson[];
 }
 
-export default class Sidebar extends Component<Props> {
+interface State {
+  isShowCourse:boolean;
+  themes:boolean[]
+}
+
+export default class Sidebar extends Component<Props,State> {
 
   constructor(props:Props){
     super(props)
+    this.state = {
+      isShowCourse: true,
+      themes:[],
+    }
+  }
+
+  componentDidUpdate(prevProps: { course_themes: Theme[] }): void {
+    const { course_themes } = this.props;
+  
+    if (prevProps.course_themes !== course_themes) {
+      let numberOfThemes = course_themes.map(() => {
+        return true;
+      });
+  
+      this.setState({ themes: [...numberOfThemes] });
+    }
+  }
+
+  toggleTheme(index:number) {
+    const updatedThemes = [...this.state.themes];
+    updatedThemes[index] = !updatedThemes[index];
+    this.setState({ themes: updatedThemes });
   }
 
   render() {
 
     const {handleAddThemeClick , course_themes} = this.props
+    const {isShowCourse,themes} = this.state
 
     return (
-      <Box sx={{width:"30%"}}>
+      <Box sx={{
+        width:"30",
+        display:{
+          xs:'none',
+          lg:"block"
+        }
+        }}>
         <Box sx={{
-        border:1,
-        padding:2
+        padding:2,
       }}>
 
       <List>
-      <ListItemButton>
+      <ListItemButton onClick={()=>this.setState({isShowCourse: !isShowCourse})}>
         <ListItemText primary="Course" />
-        {true ? <ExpandLess /> : <ExpandMore />}
+        {isShowCourse ? <ExpandLess /> : <ExpandMore />}
       </ListItemButton>
-      <Collapse in={true} timeout="auto" unmountOnExit>
+      <Collapse in={isShowCourse} timeout="auto" unmountOnExit>
           {
             course_themes && course_themes.map((theme,index)=>{
               return <List component="div" disablePadding>
-              <ListItemButton sx={{ pl: 4 }}>
+              <ListItemButton sx={{ pl: 4 }} onClick={()=>this.toggleTheme(index)}>
                 <ListItemText primary={`Theme ${index+1}`} />
-                {true ? <ExpandLess /> : <ExpandMore />}
+                {themes[index] ? <ExpandLess /> : <ExpandMore />}
               </ListItemButton>
-              <Collapse in={true} timeout="auto" unmountOnExit>
+              <Collapse in={themes[index]} timeout="auto" unmountOnExit>
             <List component="div" disablePadding>
               {
                 theme.lessons && theme.lessons.map((lesson,lesson_index)=>{
@@ -68,32 +103,6 @@ export default class Sidebar extends Component<Props> {
             </List>
             })
           }
-          
-        {/* <List component="div" disablePadding>
-          <ListItemButton sx={{ pl: 4 }}>
-            <ListItemText primary="Theme 2" />
-            {true ? <ExpandLess /> : <ExpandMore />}
-          </ListItemButton>
-          <Collapse in={true} timeout="auto" unmountOnExit>
-        <List component="div" disablePadding>
-          <ListItemButton sx={{ pl: 8 }}>
-            <ListItemText primary="Lesson 1" />
-          </ListItemButton>
-          <ListItemButton sx={{ pl: 8 }}>
-            <ListItemText primary="Lesson 2" />
-          </ListItemButton>
-          <ListItemButton sx={{ pl: 8 }}>
-            <ListItemText primary="Lesson 3" />
-          </ListItemButton>
-          <ListItemButton sx={{ pl: 8 }}>
-            <ListItemText primary="Lesson 4" />
-          </ListItemButton>
-          <ListItemButton sx={{ pl: 8 }}>
-            <ListItemText primary="Lesson 5" />
-          </ListItemButton>
-        </List>
-      </Collapse>
-        </List> */}
       </Collapse>
       </List>
       <Box>

@@ -1,4 +1,4 @@
-import { Box, Button, Divider, FormControl, InputLabel, NativeSelect, Stack, Switch, TextField, Typography } from '@mui/material'
+import { Box, Button, Divider, FormControl, InputLabel, MenuItem, NativeSelect, Select, Stack, Switch, TextField, Typography } from '@mui/material'
 import { Component } from 'react'
 import DeleteForeverOutlinedIcon from '@mui/icons-material/DeleteForeverOutlined';
 import NoImage from "../../assets/images/no-image.png"
@@ -7,6 +7,8 @@ import styled from '@emotion/styled';
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import MUIRichTextEditor from 'mui-rte'
 import { createTheme, ThemeProvider } from '@mui/material/styles'
+import { stateToHTML } from "draft-js-export-html"
+import { SelectChangeEvent } from "@mui/material";
 
 const myTheme = createTheme({
 })
@@ -33,6 +35,7 @@ const VisuallyHiddenInput = styled("input")({
     product_type:number;
     image_url:string;
     description:string;
+    order_in_the_course: number | null;
   }
 
   interface Props {
@@ -40,6 +43,7 @@ const VisuallyHiddenInput = styled("input")({
     lesson_index:number;
     lesson:LessonAlias;
     handleDeleteLessonClick: (themeId: number, lessonIndex: number) => void;
+    handleLessonDataChange: (theme_id:number, lesson_id:number, e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement> | string   | SelectChangeEvent<number>) => void;
   }
   
 
@@ -58,14 +62,23 @@ export default class Lesson extends Component<Props> {
         super(props)
       }
 
+      handleChange = (state:any) =>{
+        console.log(stateToHTML(state.getCurrentContent()))
+      }
+
   render() {
-    const {lesson_index,handleDeleteLessonClick,theme_index} = this.props
+    const {lesson,lesson_index,handleDeleteLessonClick,handleLessonDataChange,theme_index} = this.props
     return (
         <Box key={lesson_index} sx={{
-          marginLeft:5,
-            border:1,
+          marginLeft:{
+            xs:0,
+            md:5
+          },
+            boxShadow:1,
             borderRadius:3,
-            marginTop:3
+            marginTop:3,
+            padding:1,
+            bgcolor:"white"
         }}>
             <Stack divider={<Divider orientation="horizontal" flexItem />}>
             <Box
@@ -84,77 +97,103 @@ export default class Lesson extends Component<Props> {
                 alignItems="center"
                 divider={<Divider orientation="vertical" flexItem />}
               >
-                <Typography alignItems="center">
-                  <StarBorderOutlinedIcon />
-                  10 pts
+                <Box display={'flex'} alignItems={'center'}>
+                <StarBorderOutlinedIcon />
+                <Typography>
+                 {lesson.leaderboard_points} pts
                 </Typography>
-                <Button startIcon={<DeleteForeverOutlinedIcon/>} onClick={()=>handleDeleteLessonClick(theme_index,lesson_index)}>
-                    Delete
+                </Box>
+                
+                <Button variant='outlined' color='error'sx={{
+                  borderRadius:3
+                }} size='small' startIcon={<DeleteForeverOutlinedIcon/>} onClick={()=>handleDeleteLessonClick(theme_index,lesson_index)}>
+                    Delete Lesson
                 </Button>
               </Stack>
             </Box>
             <Stack
-              direction="row"
+              sx={{
+                flexDirection:{
+                  md:"row",
+                  xs:"column"
+                }
+              }}
               divider={<Divider orientation="vertical" flexItem />}
             >
               <Box
                 sx={{
-                  width: "50%",
-                  padding: 2,
+                  width:{
+                    md:"50%",
+                    xs:"100%"
+                  },
+                  padding:{
+                    md:2,
+                    xs:0
+                  },
+                  paddingTop:{
+                    xs:2
+                  }
                 }}
               >
                 <Stack direction="column">
                   <TextField
                     id="filled-helperText"
                     label="Title"
-                    variant="filled"
+                    variant="outlined"
+                    name='title'
+                    value={lesson.title}
+                    onChange={(e)=>handleLessonDataChange(theme_index,lesson_index,e)}
                   />
 
-                  <Stack direction="row">
+                  <Stack direction="row" marginTop={2} marginBottom={2} spacing={2}>
                   <TextField
                       fullWidth
                       id="filled-helperText"
                       label="Leadership Point"
-                      variant="filled"
+                      variant="outlined"
                       type="number"
+                      name='leaderboard_points'
+                    value={lesson.leaderboard_points}
+                    onChange={(e)=>handleLessonDataChange(theme_index,lesson_index,e)}
                     />
                     <TextField
                       fullWidth
                       id="filled-helperText"
                       label="Order In The Course"
-                      variant="filled"
+                      variant="outlined"
                       type="number"
+                      name='order_in_the_course'
+                    value={lesson.order_in_the_course}
+                    onChange={(e)=>handleLessonDataChange(theme_index,lesson_index,e)}
                     />
                     
                   </Stack>
                   <FormControl fullWidth>
-                      <InputLabel
-                        variant="standard"
-                        htmlFor="uncontrolled-native"
-                      >
-                        Product Type
+                      <InputLabel id="demo-select-small-label">
+                      Product Type
                       </InputLabel>
-                      <NativeSelect
-                        inputProps={{
-                          name: "age",
-                          id: "uncontrolled-native",
-                        }}
+                      <Select
+                        labelId="demo-select-small-label"
+                        id="demo-select-small"
+                        onChange={(e)=>handleLessonDataChange(theme_index,lesson_index,e)}
+                        label="Age"
+                        value={lesson.product_type}
+                        name="product_type"
                       >
-                        <option></option>
-                        {this.product_type.map(
-                          (ele: SelectType, index: number) => {
-                            return (
-                              <option key={index} value={index}>
-                                {ele.name}
-                              </option>
-                            );
-                          }
-                        )}
-                      </NativeSelect>
+                        <MenuItem value="">None</MenuItem>
+                        {this.product_type.map((ele: SelectType, index: number) => {
+                          return (
+                            <MenuItem key={index} value={index}>
+                              {ele.name}
+                            </MenuItem>
+                          );
+                        })}
+                      </Select>
                     </FormControl>
-                    <Stack
+                    <Box
                   sx={{
-                    direction: "row",
+                    display: "flex",
+                    marginTop:2
                   }}
                 >
                   <Box
@@ -162,7 +201,7 @@ export default class Lesson extends Component<Props> {
                         width: "40%",
                         }}
                   >
-                    <img src={NoImage} alt="No Image" height={"100px"} width={"100px"} />
+                    <img src={lesson.image_url?lesson.image_url: NoImage} alt="No Image" height={"100px"} width={"100px"} />
                   </Box>
 
                   <Stack
@@ -182,27 +221,45 @@ export default class Lesson extends Component<Props> {
                       startIcon={<CloudUploadIcon />}
                     >
                       Upload file
-                      <VisuallyHiddenInput type="file" />
+                      <VisuallyHiddenInput type="file" onChange={(e)=>handleLessonDataChange(theme_index,lesson_index,e)} />
                     </Button>
                   </Stack>
-                </Stack>
+                </Box>
                 </Stack>
               </Box>
               <Box
                 sx={{
-                  width: "50%",
-                  padding: 1,
+                  width:{
+                    md:"50%",
+                    xs:"100%"
+                  },
+                  paddingTop:{
+                    xs:2
+                  },
+                  padding:{
+                    md:0,
+                    xs:1
+                  },
                   border:1,
                   borderRadius:3,
-                  margin:3
+                  margin:{
+                    xs:0,
+                    md:3
+                  },
+                  marginTop:{
+                    md:0,
+                    xs:3
+                  }
                 }}
               >
                 <ThemeProvider theme={myTheme}>
                     <MUIRichTextEditor 
-                        label="Lesson Content" 
+                        label="Lesson Content"
+                        onChange={(state)=>handleLessonDataChange(theme_index,lesson_index,stateToHTML(state.getCurrentContent()))}
                     />
                 </ThemeProvider>  
               </Box>
+             
             </Stack>
           </Stack>
 
