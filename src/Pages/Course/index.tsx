@@ -210,7 +210,7 @@ export default class Course extends Component<{},State> {
       <Box sx={{
         display:"flex"
       }}>
-        <Sidebar handleAddThemeClick={this.handleAddThemeClick} course_themes={this.state.course_themes}/>
+        <Sidebar handleAddLessonClick={this.handleAddLessonClick} handleAddThemeClick={this.handleAddThemeClick} course_themes={this.state.course_themes}/>
         <CourseSection handleAddThemeClick={this.handleAddThemeClick} course_themes={this.state.course_themes} handleAddLessonClick={this.handleAddLessonClick} handleDeleteThemeClick={this.handleDeleteThemeClick} handleDeleteLessonClick={this.handleDeleteLessonClick} handleCourseDataChange={this.handleCourseDataChange} course_data={this.state.course} handleThemeDataChange={this.handleThemeDataChange} handleLessonDataChange={this.handleLessonDataChange}/>
       </Box>
     )

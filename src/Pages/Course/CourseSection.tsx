@@ -439,13 +439,22 @@ export default class CourseSection extends Component<Props> {
                     }}
                     direction="column"
                   >
-                    <Typography>Overview Picture</Typography>
-                    <Typography>Minimal Picture: 343x193 px</Typography>
-                    <Typography>Maximum size: 5 mb</Typography>
+                    <Typography fontWeight="bold">Overview Picture</Typography>
+                    <Typography color={'gray'} variant="caption" display="block">
+                    Minimal Picture: 343x193 px
+                    </Typography>
+                    <Typography color={'gray'} variant="caption" display="block">
+                    Maximum size: 5 mb
+                    </Typography>
                     <Button
                       component="label"
                       role={undefined}
                       variant="contained"
+            sx={{
+              color:"black",
+              bgcolor:"white",
+              borderRadius:'20px'
+            }}
                       tabIndex={-1}
                       startIcon={<CloudUploadIcon />}
                     >
@@ -502,10 +511,24 @@ export default class CourseSection extends Component<Props> {
                       </Box>
                     );
                   })}
-                <Stack direction="row" spacing={2} marginLeft={5} marginTop={2}>
+                <Stack direction="row" sx={{
+                    marginLeft:{
+                      md:5,
+                      xs:0
+                    },
+                    gap:{
+                      lg:2,
+                      md:1,
+                    }
+                }}  marginTop={2}>
                   <Button
                     size="small"
-                    variant="outlined"
+                    variant="contained"
+            sx={{
+              color:"black",
+              bgcolor:"white",
+              borderRadius:'20px'
+            }}
                     startIcon={<AddCircleOutlineOutlinedIcon />}
                     onClick={() => handleAddLessonClick(theme_index)}
                   >
@@ -513,14 +536,24 @@ export default class CourseSection extends Component<Props> {
                   </Button>
                   <Button
                     size="small"
-                    variant="outlined"
+                    variant="contained"
+            sx={{
+              color:"black",
+              bgcolor:"white",
+              borderRadius:'20px'
+            }}
                     startIcon={<AddCircleOutlineOutlinedIcon />}
                   >
                     Add Quiz
                   </Button>
                   <Button
                     size="small"
-                    variant="outlined"
+                    variant="contained"
+            sx={{
+              color:"black",
+              bgcolor:"white",
+              borderRadius:'20px'
+            }}
                     startIcon={<AddCircleOutlineOutlinedIcon />}
                   >
                     Add Flash Card
@@ -533,7 +566,12 @@ export default class CourseSection extends Component<Props> {
         <Stack direction="row" spacing={2} marginTop={2}>
           <Button
             size="small"
-            variant="outlined"
+            variant="contained"
+            sx={{
+              color:"black",
+              bgcolor:"white",
+              borderRadius:'20px'
+            }}
             startIcon={<AddCircleOutlineOutlinedIcon />}
             onClick={handleAddThemeClick}
           >
@@ -541,19 +579,29 @@ export default class CourseSection extends Component<Props> {
           </Button>
           <Button
             size="small"
-            variant="outlined"
+            variant="contained"
+            sx={{
+              color:"black",
+              bgcolor:"white",
+              borderRadius:'20px'
+            }}
             startIcon={<AddCircleOutlineOutlinedIcon />}
           >
             New Mock Exam
           </Button>
-          <Button
+          {/* <Button
             size="small"
-            variant="outlined"
+            variant="contained"
+            sx={{
+              color:"black",
+              bgcolor:"white",
+              borderRadius:'20px',
+            }}
             startIcon={<AddCircleOutlineOutlinedIcon />}
             onClick={() => console.log(course_themes)}
           >
             Console State
-          </Button>
+          </Button> */}
         </Stack>
       </Box>
     );

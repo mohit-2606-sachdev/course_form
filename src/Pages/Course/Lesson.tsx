@@ -210,13 +210,22 @@ export default class Lesson extends Component<Props> {
                     }}
                     direction="column"
                   >
-                    <Typography>Overview Picture</Typography>
-                    <Typography>Minimal Picture: 343x193 px</Typography>
-                    <Typography>Maximum size: 5 mb</Typography>
+                    <Typography fontWeight="bold">Overview Picture</Typography>
+                    <Typography color={'gray'} variant="caption" display="block">
+                    Minimal Picture: 343x193 px
+                    </Typography>
+                    <Typography color={'gray'} variant="caption" display="block">
+                    Maximum size: 5 mb
+                    </Typography>
                     <Button
                       component="label"
                       role={undefined}
                       variant="contained"
+            sx={{
+              color:"black",
+              bgcolor:"white",
+              borderRadius:'20px'
+            }}
                       tabIndex={-1}
                       startIcon={<CloudUploadIcon />}
                     >
