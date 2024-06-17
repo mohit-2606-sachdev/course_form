@@ -170,7 +170,7 @@ export default class Theme extends Component<Props> {
                         labelId="demo-select-small-label"
                         id="demo-select-small"
                         onChange={(e)=>handleThemeDataChange(theme_index,e)}
-                        label="Age"
+                        label="Product Type"
                         value={theme.product_type}
                         name="product_type"
                       >

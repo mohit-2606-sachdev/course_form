@@ -285,7 +285,7 @@ export default class CourseSection extends Component<Props> {
                         labelId="demo-select-small-label"
                         id="demo-select-small"
                         value={course_data.category}
-                        label="Age"
+                        label="category"
                         onChange={handleCourseDataChange}
                         name="category"
                       >
@@ -331,7 +331,7 @@ export default class CourseSection extends Component<Props> {
                         labelId="demo-select-small-label"
                         id="demo-select-small"
                         value={course_data.product_type}
-                        label="level"
+                        label="product_type"
                         onChange={handleCourseDataChange}
                         name="product_type"
                       >
@@ -356,7 +356,7 @@ export default class CourseSection extends Component<Props> {
                         labelId="demo-select-small-label"
                         id="demo-select-small"
                         value={course_data.language}
-                        label="level"
+                        label="language"
                         onChange={handleCourseDataChange}
                         name="language"
                       >
@@ -380,7 +380,7 @@ export default class CourseSection extends Component<Props> {
                       labelId="demo-select-small-label"
                       id="demo-select-small"
                       value={course_data.certificate}
-                      label="level"
+                      label="certificate"
                       onChange={handleCourseDataChange}
                       name="certificate"
                     >
@@ -598,7 +598,6 @@ export default class CourseSection extends Component<Props> {
               borderRadius:'20px',
             }}
             startIcon={<AddCircleOutlineOutlinedIcon />}
-            onClick={() => console.log(course_themes)}
           >
             Console State
           </Button> */}
